@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}{{ operation }}{% endblock %}
+{% block content %}
+
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card">
+         <div class="card-header">{{ operation }}</div>
+        <div class="card-body">
+         {% if post.image %}
+         {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+         <img class="card-img" src="{{ im.url }}">
+         {% endthumbnail %}
+         </div>
+         {% endif %}
+          
+         
+         {% for error in form.errors %}
+            <div class="alert alert-danger" role="alert">
+              {{ error }}
+            </div>
+          {% endfor %}
+
+          {% if post %}
+            <form method="post" enctype="multipart/form-data" action="{% url 'post_edit' request.user post.id %}">
+          {% else%}
+            <form method="post" enctype="multipart/form-data" action="{% url 'new_post'%}">
+          {% endif %}
+              {% csrf_token %}
+              {% for field in form %}
+                <div class="form-group row" aria-required={{ field.field.required }}>
+                  <label
+                    for="{{ field.id_for_label }}"
+                    class="col-md-4 col-form-label text-md-right">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                      <span class="required">*</span>
+                    {% endif %}
+                  </label>
+                  <div class="col-md-6">
+                    {{ field }}
+                  </div>
+                </div>
+              {% endfor %}
+
+            <div class="col-md-6 offset-md-4">
+              <button type="submit" class="btn btn-primary">
+                 {{ add_or_save }}
+              </button>
+            </div>
+          </form>
+        </div> <!-- card body -->
+      </div> <!-- card -->
+    </div> <!-- col -->
+  </div> <!-- row -->
+
+{% endblock %}

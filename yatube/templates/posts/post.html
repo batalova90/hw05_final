@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title%}Текст поста{% endblock %}
+{% block header %}Текст поста{% endblock %}
+
+{% block content %}
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-3 mb-3 mt-1">
+       {% include "includes/card.html" %}
+    </div>
+  </div>
+    <div class="col-md-9">
+     {% include "posts/post_item.html" with post=post %}
+     {% include "posts/comments.html" with comments=comments %}
+    </div>
+</main>
+{% endblock %}

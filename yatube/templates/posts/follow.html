@@ -1,0 +1,13 @@
+ {% extends "base.html" %}
+ {% block title %}Подписки {{ request.user.username }}{% endblock %}
+ {% block header %}Подиски {{ request.user.username }}{% endblock %}
+ {% block content %}
+  <div class="container">
+  {% include "includes/menu.html" with follow=True %}
+   {% for post in page%}
+   {% include  "posts/post_item.html" with post=post %}
+   {% endfor %}
+   {% include "includes/paginator.html" %}
+  </div>
+  {% endblock %}
+
