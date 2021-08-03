@@ -8,7 +8,7 @@ class StaticViewsTests(TestCase):
 
     def test_static_views(self):
         templates_name = {'about:author': 'about/author.html',
-                          'about:tech': 'about/tect.html'}
+                          'about:tech': 'about/tech.html'}
         for url_name, template_name in templates_name.items():
             with self.subTest(url_name=url_name):
                 response = self.guest_client.get(reverse(url_name))
