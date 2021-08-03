@@ -8,7 +8,7 @@ class StaticURLTests(TestCase):
 
     def test_static_url_exists(self):
         """Проверка доступности /author/."""
-        urls = ['about:author', 'about:tect']
+        urls = ['/about/author/', '/about/tech/']
         for url_name in urls:
             with self.subTest(url_name=url_name):
                 response = self.guest_client.get(reverse(url_name))
