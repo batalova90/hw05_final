@@ -39,12 +39,8 @@ def profile(request, username):
     page = get_page(request, paginator)
     following = False
     if request.user.is_authenticated:
-        try:
-            Follow.objects.filter(user=request.user,
-                                  author__username=username)
-            following = True
-        except Follow.DoesNotExist:
-            pass
+        following = Follow.objects.filter(user=request.user,
+                                          author__username=username).exists()
     return render(request, "posts/profile.html",
                   {"author": author, "page": page,
                    "count": author.posts.count,
@@ -81,6 +77,7 @@ def new_post(request):
                    "add_or_save": "Добавить", })
 
 
+@login_required()
 def post_edit(request, username, post_id):
     post = get_object_or_404(Post, id=post_id, author__username=username)
 
@@ -133,9 +130,8 @@ def add_comment(request, username, post_id):
 
 @login_required
 def follow_index(request):
-    # получаем авторов, на которых подписан пользователь
-    authors = request.user.follower.all().values_list('author')
-    posts = Post.objects.filter(author__in=authors)
+    # так красиво, как магия)))
+    posts = Post.objects.filter(author__following__user=request.user)
     paginator = Paginator(posts, settings.POSTS_IN_PAGE)
     page = get_page(request, paginator)
     return render(request, "posts/follow.html", {"page": page, })
@@ -143,14 +139,11 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    if request.user.username == username:
+    user = get_object_or_404(User, username=username)
+    if request.user == user:
         return redirect(follow_index)
-    if request.user.follower.filter(author__username=username).exists():
-        return redirect(follow_index)
-    if not request.user.following.filter(author__username=username).exists():
-        Follow.objects.create(user=request.user,
-                              author=get_object_or_404(User,
-                                                       username=username))
+    Follow.objects.get_or_create(user=request.user,
+                                 author=user)
     return redirect(follow_index)
 
 

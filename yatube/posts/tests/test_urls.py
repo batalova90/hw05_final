@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
+
 from posts.models import Group, Post
 
 User = get_user_model()
@@ -89,9 +90,12 @@ class TaskURLTests(TestCase):
 
     # Анонимного пользователя
     def test_urls_edit_post_guest_user(self):
-        response = self.edit_post(self.guest_client)
-        self.assertRedirects(response, reverse('post',
-                                               kwargs=self.parameters))
+        response = self.guest_client.get(reverse('post_edit',
+                                                 kwargs=self.parameters),
+                                         follow=True)
+        log_in = reverse('login') + '?next=' + reverse('post_edit',
+                                                       kwargs=self.parameters)
+        self.assertRedirects(response, log_in)
 
     # Автор поста
     def test_urls_edit_post_author(self):
